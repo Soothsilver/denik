@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Denik</string>
+    <string name="badPass">Toto heslo neodpovídá datům.</string>
+    <string name="loginTitle">Přihlášení do deníku</string>
+    <string name="editacenanmu">Editace záznamu</string>
+    <string name="errorSaving">Chyba při ukládání.</string>
+    <string name="saveSuccessful">Uloženo.</string>
+    <string name="thisDiaryDoesNotExist">Deník s tímto jménem a heslem neexistuje.</string>
+    <string name="heslaNejsouShodna">Hesla nejsou shodná.</string>
+    <string name="denikZalozen">Deník úspěšně založen.</string>
+    <string name="passIncorrect">Tímto heslem se nedá soubor rozšifrovat.</string>
+    <string name="newStory">Nový záznam</string>
+    <string name="encryptionFailure">Selhalo zašifrování.</string>
+    <string name="passwordMustNotBeEmpty">Heslo nesmí být prázdné.</string>
+    <string name="zaznamSmazan">Záznam smazán.</string>
+    <string name="noMatchFound">Žádná shoda nenalezena.</string>
+    <string name="noname">Bezejmenný</string>
+    <string name="NotYetImplemented">Tato funkce ještě není implementována.</string>
+    <string name="denikySeNyniBudouUkladatDo">"Deníky se budou nyní ukládat do adresáře "</string>
+    <string name="soucasneDenikyNebylyPrekopirovany">Současné deníky nebyly překopírovány!</string>
+    <string name="exportovano">Exportováno.</string>
+    <string name="couldNotOpenFile">Nepodařilo se přečíst soubor.</string>
+    <string name="souborBylZmenen">Soubor deníku se změnil od posledního uložení!</string>
+    <string name="fdgsdfsgsdfg">ZÁLOHA SELHALA! Cizí soubor byl zničen.</string>
+    <string name="dfgdkjfbdsjgnbsjdfbdsmbndsgnbdsfds">Záloha úspěšná.</string>
+    <string name="importovano">Importováno.</string>
+</resources>

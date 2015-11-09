@@ -1,0 +1,12 @@
+Zapamatovat si obrazovku pro obnovení stavu.
+
+Možnost vybrat deník, informace o názvu deníku do kterého se zapisuje.
+Pamatovat si poslední otevřený deník.
+Možnost pamatovat si heslo.
+V datu, které je vidět v přehledu, uvádět i rok.
+Vyhledávání dát jen jako možnost v menu.
+Nahoře vedle menu přidat tlačítko pro uložení rozepsaneho textu.
+Po zmáčknutí tlačítka plus jít rovnou na editaci nového záznamu.
+V kolonce nadpisu kurzívou nadpis.  V kolonce textu text.
+V menu přidat výběr zobrazení podle data. Vyhledávání totiž nevyhledává v datu.
+A nevím zda by bylo možné, aby nahoře při editaci ten stavový řádek s menu zůstal. Když píšu delší text tak zmizí.
