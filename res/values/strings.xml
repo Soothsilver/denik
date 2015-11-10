@@ -25,4 +25,16 @@
     <string name="fdgsdfsgsdfg">ZÁLOHA SELHALA! Cizí soubor byl zničen.</string>
     <string name="dfgdkjfbdsjgnbsjdfbdsmbndsgnbdsfds">Záloha úspěšná.</string>
     <string name="importovano">Importováno.</string>
+    <string name="zadnyDenikNebylNalezen">Žádný deník nebyl nalezen.</string>
+    <string name="mistoByloSmazano">Místo, kde byly uložené deníky, již neexistuje. Deníky se nyní budou ukládat do výchozího umístění.</string>
+    <string name="denikSTimtoJmenemJizExistuje">Deník s tímto jménem již existuje.</string>
+    <string name="hesloUnempty">Heslo nesmí být prázdné.</string>
+    <string name="jmenoUnempty">Jméno nesmí být prázdné.</string>
+    <string name="denikSeNapodriloUlozit">"Deník se nepodařilo uložit: "</string>
+    <string name="denikSTimtoJmenemNeexistuje">Deník s tímto jménem neexistuje.</string>
+    <string name="chybaPriTvorbeProudu">Chyba při tvorbě proudu.</string>
+    <string name="chybaPriZapisovani">Chyba při zapisování.</string>
+    <string name="chybaPriUzavirani">Chyba při uzavírání.</string>
+    <string name="saveFailed">Deník se nepodařilo uložit!</string>
+    <string name="saveSuccessfulIs">Uloženo.</string>
 </resources>

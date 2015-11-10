@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu
-    xmlns:yourapp="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/openSearch"
+          android:icon="@drawable/ic_search"
+          android:showAsAction="ifRoom"
+          android:title="Otevřít vyhledávání"
+          />
     <item android:id="@+id/newStory"
         android:icon="@drawable/ic_plus"
         android:showAsAction="ifRoom"
@@ -9,11 +13,15 @@
     <item android:id="@+id/setStorageDirectory"
           android:title="Nastavit složku..."
           />
+    <item android:id="@+id/changePassword"
+          android:title="Změnit heslo..."
+          />
+    <!--
     <item android:id="@+id/exportAsPlaintext"
           android:title="Exportovat deník..."
           />
 
     <item android:id="@+id/importFromPlaintext"
           android:title="Přepsat deníkem..."
-        />
+        />-->
 </menu>

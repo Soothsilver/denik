@@ -21,6 +21,12 @@
             android:layout_height="wrap_content"
             android:text="..."
             android:id="@+id/bChangeDate" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="uložit"
+            android:id="@+id/bQuickSave"
+        />
 
 
     </LinearLayout>
@@ -29,12 +35,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:singleLine="true"
+        android:hint="Nadpis"
         android:id="@+id/tbNadpis" />
 
     <EditText
         android:gravity="top|left"
+        android:hint="Popište své zážitky sem..."
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
+        android:scrollbars="vertical"
         android:inputType="textMultiLine"
         android:id="@+id/tbContents"
         android:textSize="@dimen/NormalSize"/>

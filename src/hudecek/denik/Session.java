@@ -1,158 +1,136 @@
 package hudecek.denik;
 
-import java.io.*;
-import java.util.ArrayList;
-
 import android.app.Activity;
-import android.os.*;
-import android.widget.Toast;
 
+import java.io.File;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
-public class Session {
-    private static String PREFERENCES_FILE = "denikpreferences";
-    public static String diaryName = "";
-    public static String password = "";
-    public static boolean initialized = false;
-    public static File diaryDirectory;
-    public static String searchText = null;
+/**
+ * Represents everything that needs to be saved when the application is paused. The entire session is serialized into the diary file.
+ */
+public class Session implements Serializable {
+    private static Session currentSession;
+    private ArrayList<Story> entries;
+    private String name;
+    private String pass;
+    public Session(String name, String pass) {
+        this.name = name;
+        this.pass = pass;
+        this.entries = new ArrayList<>();
+    }
 
-    public static Story editingStory = null;
-    public static ArrayList<Story> stories = null;
+    public static Session getSession() {
+        return Session.currentSession;
+    }
 
-    public static String serialize() {
+    public ArrayList<Story> getStories() {
+        return entries;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Serializes all entries into a string.
+     * @return The serialized list of all entries.
+     */
+    private String serialize() {
         String sum = "";
-        for(Story story : stories) {
-            String line = story.name + ";" + story.date.getDate() + ";" + story.date.getMonth() + ";" + story.date.getYear() + ";" + story.text.replace(';', ':').replace("\r", "").replace("\n", "__NEWLINE__");
+        for(Story story : entries) {
+            Calendar c = Calendar.getInstance(); c.setTime(story.date);
+            String line = story.name + ";" + c.get(Calendar.DATE) + ";" + c.get(Calendar.MONTH) + ";" + c.get(Calendar.YEAR) + ";" + story.text.replace(';', ':').replace("\r", "").replace("\n", "__NEWLINE__");
             sum += line + "\r\n";
         }
+        // TODO optimize this
         return sum;
     }
-    public static void deserialize(String from) {
-        stories = new ArrayList<>();
+    private boolean deserialize(String from) {
+        entries = new ArrayList<>();
         try {
             for (String line : from.split("\r\n")) {
                 if (line.trim().length() == 0) continue;
                 String[] split = line.split(";");
                 Story story = new Story(split[0]);
-                Date d = new Date(Integer.parseInt(split[3]),
+                story.date = new GregorianCalendar(
+                        Integer.parseInt(split[3]),
                         Integer.parseInt(split[2]),
-                        Integer.parseInt(split[1]));
-                story.date = d;
+                        Integer.parseInt(split[1])).getTime();
                 if (split.length == 4) {
                     story.text = "";
                 } else {
                     story.text = split[4].replace("__NEWLINE__", "\n");
                 }
-                stories.add(story);
+                entries.add(story);
             }
+            return true;
         } catch (Exception ex) {
-        }
-    }
-
-    public static void loadDiaryDirectory(Activity context) {
-        diaryDirectory = new File(Utils.retrieve(context, "diaryDirectory"));
-        if (diaryDirectory == null) {
-            File documents = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
-            File denikDir = new File(documents, "denik");
-            denikDir.mkdirs();
-            diaryDirectory = denikDir;
-        }
-    }
-
-    public static String oldcontents;
-
-    public static boolean load(Activity context, String name, String pass) {
-        Session.diaryName = name;
-        Session.password = pass;
-
-        if (diaryDirectory == null) loadDiaryDirectory(context);
-        File denikFile = new File(diaryDirectory, diaryName + ".hudecek");
-
-        try {
-
-            String contents = Utils.readAllText(denikFile);
-            oldcontents = contents;
-
-            contents = Encryption.decrypt(context, contents, Session.password);
-
-            if (contents == null) {
-                return false;
-            }
-            Session.deserialize(contents);
-
-
-        } catch (Exception ex) {
-            Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show();
             return false;
         }
+    }
+    public boolean saveToFile(Activity context) {
+        String clearText = serialize();
+        String encryptedText = Encryption.encrypt(context, clearText, pass);
+        File file = Diaries.getFileFromDiaryName(context, name);
+        boolean saved = Utils.saveAllText(context, file, encryptedText);
+        if (saved) {
+            // Backup
+            File backups = Diaries.getBackupDirectory(context);
+            Date d = new Date();
+            Calendar c = Calendar.getInstance();
+            c.setTime(d);
+            File backupFile = new File(backups, name + "." + c.get(Calendar.DATE) + "." + c.get(Calendar.MONTH) + "." + c.get(Calendar.YEAR) + ".hudecek");
+            Utils.saveAllText(context, backupFile, encryptedText);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    @SuppressWarnings("RedundantIfStatement")
+    private boolean loadFromFile(Activity context) {
+        File file = Diaries.getFileFromDiaryName(context, name);
+        String encryptedText = Utils.readAllText(file);
+        String clearText = Encryption.decrypt(context, encryptedText, pass);
+        if (clearText == null) return false;
+        if (!deserialize(clearText)) return false;
         return true;
     }
 
-    public static boolean save(Activity context) {
-        if (diaryDirectory == null) loadDiaryDirectory(context);
-        File denikFile = new File(diaryDirectory, diaryName + ".hudecek");
-        String sss = serialize();
-        sss = Encryption.encrypt(context, sss, Session.password);
-        String ancient = "";
-        try {
-             ancient = Utils.readAllText(denikFile);
-        } catch (IOException e) {
-            ancient = sss;
-            Session.oldcontents = sss;
-        }
-        if (!Session.oldcontents.equals(ancient)) {
-            Utils.Toast(context, context.getString(R.string.souborBylZmenen));
-            File ancientFile = new File(diaryDirectory, diaryName + ".theirs.hudecek");
-            if (Utils.saveAllText(context, ancientFile, ancient)) {
-                Utils.Toast(context, context.getString(R.string.dfgdkjfbdsjgnbsjdfbdsmbndsgnbdsfds));
-            } else {
-                Utils.Toast(context, context.getString(R.string.fdgsdfsgsdfg));
-            }
-        }
+    public static File diaryDirectory;
+    public static String searchText = null;
+    public static Story editingStory = null;
 
-        try {
-            denikFile.createNewFile();
-        } catch (IOException e) {
-            Toast.makeText(context, context.getString(R.string.errorSaving), Toast.LENGTH_LONG).show();
+
+    public static boolean login(Activity context, String name, String password) {
+        if (!Diaries.exists(context, name)) {
+            UserInterface.toast(context, context.getString(R.string.denikSTimtoJmenemNeexistuje));
             return false;
         }
-        FileOutputStream stream = null;
-        try {
-            stream = new FileOutputStream(denikFile);
-        } catch (FileNotFoundException e) {
-            Toast.makeText(context, "Chyba p�i tvorb� proudu.", Toast.LENGTH_LONG).show();
+        Session session = new Session(name, password);
+        if (session.loadFromFile(context)) {
+            Session.currentSession = session;
+            return true;
+        } else {
             return false;
         }
-        try {
-            if (sss == null) {
-                return false;
-            }
-            stream.write(sss.getBytes());
-        } catch (IOException e) {
-            Toast.makeText(context, "Chyba p�i zapisov�n�.", Toast.LENGTH_LONG).show();
-            return false;
-        } finally {
-            try {
-                stream.close();
-            } catch (IOException e) {
-                Toast.makeText(context, "Chyba p�i uzav�r�n�.", Toast.LENGTH_LONG).show();
-                return false;
-            }
-        }
-        Session.oldcontents = sss;
-        backup(context, diaryDirectory, diaryName, sss);
-        Toast.makeText(context, context.getString(R.string.saveSuccessful), Toast.LENGTH_SHORT).show();
-        return true;
     }
 
-    private static void backup(Activity context, File diaryDirectory, String diaryName, String sss) {
-        File backups = new File(diaryDirectory, "backups");
-        backups.mkdirs();
-        Date d = new Date();
+    public void addStory(Story story) {
+        entries.add(story);
+    }
 
-        File backupfile = new File(backups, diaryName + "." + d.getDate() + "." + d.getMonth() + "." + d.getYear() + ".hudecek" );
-        Utils.saveAllText(context, backupfile, sss);
+    public void removeStory(Story story) {
+        this.entries.remove(story);
+    }
+
+    public void saveAndToast(Activity activity) {
+        if (saveToFile(activity))
+            UserInterface.toast(activity, activity.getString(R.string.saveSuccessfulIs));
+        else
+            UserInterface.toast(activity, activity.getString(R.string.saveFailed));
     }
 }

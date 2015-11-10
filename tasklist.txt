@@ -1,12 +1,38 @@
-Zapamatovat si obrazovku pro obnovení stavu.
 
-Možnost vybrat deník, informace o názvu deníku do kterého se zapisuje.
-Pamatovat si poslední otevřený deník.
-Možnost pamatovat si heslo.
-V datu, které je vidět v přehledu, uvádět i rok.
-Vyhledávání dát jen jako možnost v menu.
-Nahoře vedle menu přidat tlačítko pro uložení rozepsaneho textu.
-Po zmáčknutí tlačítka plus jít rovnou na editaci nového záznamu.
-V kolonce nadpisu kurzívou nadpis.  V kolonce textu text.
-V menu přidat výběr zobrazení podle data. Vyhledávání totiž nevyhledává v datu.
+Možnost změnit heslo.
+Možnost změnit složku.
+Otestovat, že všechno funguje.
+Nezobrazují se texty článků v přehledu. Čím to je?
+
+Changelog:
+---------------------------------------------
+
+1.2
+
+Přidané funkce a změny:
+- Refaktorizace.
+- Založení nového deníku odsunuto na zvláštní obrazovku.
+- Na přihlašovací obrazovce se deník vybírá ze seznamu. (REQ Možnost vybrat deník, informace o názvu deníku do kterého se zapisuje.)
+- Založení nového deníku nyní i při zvláštní situacích nezpůsobí pád aplikace.
+- Založením nového deníku nelze omylem přepsat staré deníky.
+- Přihlašovací obrazovka si pamatuje poslední otevřený deník. (REQ Pamatovat si poslední otevřený deník.)
+- Přihlašovací obrazovka si pamatuje heslo podle zaškrtávacího tlačítka. (REQ Možnost pamatovat si heslo.)
+- Aplikace již nespamuje tolik push notifikací jako dřív.
+- Vyhledávací box se zobrazí až po kliknutí na ikonku. Pak se dá opět skrýt. (REQ Vyhledávání dát jen jako možnost v menu.)
+- Vylepšené vyhledávání: každé slovo se hledá samostatně. Nadpis, text a datum záznamu musí dohromady obsahovat každé slovo z vyhledávání aspoň jednou. Jako datum se bere řetězec "den.měsíc.rok". Tedy například "bazén .7.2014" vyhledá všechny záznamy, které mají v textu nebo nadpisu "bazén" a byly vytvořeny v červenci 2014 -- nebo obsahují text ".7.2014". (REQ V menu přidat výběr zobrazení podle data. Vyhledávání totiž nevyhledává v datu.)
+- Ve všech textových okénkách se zašedlým textem objevuje nápověda. (REQ V kolonce nadpisu kurzívou nadpis.  V kolonce textu text.)
+- Tlačítko "+" vytvoří záznam a okamžitě spustí jeho editaci. (Po zmáčknutí tlačítka plus jít rovnou na editaci nového záznamu.)
+- Aktuálně editovaný záznam je možné rychle kdykoliv uložit. (Nahoře vedle menu přidat tlačítko pro uložení rozepsaneho textu.)
+- Když je aplikace na pozadí a Android ji zničí, aktuálně editovaný text není ztracen a načte se zpět. (REQ Zapamatovat si obrazovku pro obnovení stavu.)
+- Vyhledávání již nerozlišuje malá a velká písmena. (REQ Nerozlišovat ve vyhledávání malá a velká písmena.)
+- Přehled záznamů nyní u každého záznamu zobrazuje i rok. (REQ V datu, které je vidět v přehledu, uvádět i rok.)
+Odstraněné funkce:
+- Již není možné exportovat nebo importovat záznamy ve formě čistého textu.
+- Pokud se soubor s deníkem změní, zatímco je otevřen v aplikaci, aplikace o tom uživatele neinformuje.
+
+
+
+
+Maybe Later:
+-------------------------------------------
 A nevím zda by bylo možné, aby nahoře při editaci ten stavový řádek s menu zůstal. Když píšu delší text tak zmizí.

@@ -7,15 +7,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Objects;
+import android.widget.*;
 
 
 public class WelcomeActivity extends Activity {
@@ -29,15 +21,6 @@ public class WelcomeActivity extends Activity {
                     Utils.setStorageDirectory(this, data.getData());
                 }
                 break;
-            case Utils.FILE_IMPORT:
-                if (resultCode == RESULT_OK) {
-                    Utils.importFile(this, data.getData());
-                }
-                break;
-            case Utils.FILE_EXPORT:
-                if (resultCode == RESULT_OK) {
-                    Utils.exportFile(this, data.getData());
-                }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -46,8 +29,8 @@ public class WelcomeActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.setStorageDirectory) {
             Utils.launchFileDialog(this, Utils.FILE_SELECT_CODE);
-        } else {
-            // Session.password = "";
+        } else if (item.getItemId() == R.id.createNewDiary) {
+            UserInterface.switchTo(this, NewDiaryActivity.class);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -63,62 +46,75 @@ public class WelcomeActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome);
 
-        EditText tbName = (EditText)findViewById(R.id.tbName);
-        EditText tbPass = (EditText)findViewById(R.id.tbPassword);
-
-        EditText tbNewDiary = (EditText)findViewById(R.id.tbNewDiary);
-        EditText tbNewPass1 = (EditText)findViewById(R.id.tbNewPass1);
-        EditText tbNewPass2 = (EditText)findViewById(R.id.tbNewPass2);
-
-        if (Session.diaryName != null) tbName.setText(Session.diaryName);
-        if (Session.password != null) tbPass.setText(Session.password);
-
-        Button bLogin = (Button)findViewById(R.id.bLogin);
-        Button bRegister = (Button)findViewById(R.id.bNewDiary);
-
-        Activity activ = this;
-        getActionBar().setTitle(getString(R.string.loginTitle));
-
-        bRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String name = tbNewDiary.getText().toString();
-                String pass1 = tbNewPass1.getText().toString();
-                String pass2 = tbNewPass2.getText().toString();
-                if (!pass1.equals(pass2)) {
-                    Toast.makeText(activ, getString(R.string.heslaNejsouShodna), Toast.LENGTH_LONG).show();
-                    return;
+        final Spinner spName = (Spinner) findViewById(R.id.spnName);
+        final EditText tbPass = (EditText)findViewById(R.id.tbPassword);
+        final CheckBox cbRemember = (CheckBox)findViewById(R.id.cbRememberPassword);
+        populateSpinner(spName);
+        String ancientName = Utils.retrieveSetting(this, "login-name");
+        String ancientPassword = Utils.retrieveSetting(this, "login-password");
+        if (ancientPassword != null) {
+            tbPass.setText(ancientPassword);
+        }
+        if ("true".equals(Utils.retrieveSetting(this, "login-remember"))) {
+            cbRemember.setChecked(true);
+        }
+        if (ancientName != null) {
+            for (int i = 0; i <spName.getCount();i++) {
+                if (spName.getItemAtPosition(i).toString().equals(ancientName)) {
+                    spName.setSelection(i);
+                    break;
                 }
-                Session.diaryName = name;
-                Session.password = pass1;
-                Session.stories = new ArrayList<Story>();
-                if (Session.save(activ)) {
-                    Toast.makeText(activ, getString(R.string.denikZalozen), Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-        bLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                String diaryName = tbName.getText().toString();
-                String diaryPass = tbPass.getText().toString();
-                if (Session.load(activ, diaryName, diaryPass)) {
-                    Intent i = new Intent(WelcomeActivity.this, MainActivity.class);
-                    startActivity(i);
-                } else {
-                    //Toast.makeText(activ, getString(R.string.thisDiaryDoesNotExist), Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
-        // Attempt login
-        if (Session.diaryName != null && Session.password != null && !Objects.equals(Session.diaryName, "") && !Objects.equals(Session.password, "")) {
-            if (Session.load(activ, Session.diaryName, Session.password)) {
-                Intent i = new Intent(WelcomeActivity.this, MainActivity.class);
-                startActivity(i);
             }
         }
 
+
+        Button bLogin = (Button)findViewById(R.id.bLogin);
+
+        final Activity context = this;
+        getActionBar().setTitle(getString(R.string.loginTitle));
+
+
+        bLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String diaryName = spName.getSelectedItem().toString();
+                String diaryPass = tbPass.getText().toString();
+                if (Session.login(context, diaryName, diaryPass)) {
+
+                    if (!cbRemember.isChecked()) {
+                        tbPass.setText("");
+                        Utils.storeSetting(context, "login-password", "");
+                    }
+                    Utils.storeSetting(context, "login-remember", cbRemember.isChecked() ? "true" : "false");
+                    UserInterface.switchTo(context, MainActivity.class);
+                }
+                /*
+                if (Session.load(context, diaryName, diaryPass)) {
+                    Intent i = new Intent(WelcomeActivity.this, MainActivity.class);
+                    startActivity(i);
+                }*/
+            }
+        });
+    }
+
+    @Override
+    protected void onStop() {
+        final Spinner spName = (Spinner) findViewById(R.id.spnName);
+        final EditText tbPass = (EditText)findViewById(R.id.tbPassword);
+        Object o = spName.getSelectedItem();
+        Utils.storeSetting(this, "login-name", o == null ? "" : o.toString());
+        Utils.storeSetting(this, "login-password", tbPass.getText().toString());
+        super.onStop();
+    }
+
+    private void populateSpinner(Spinner spinner) {
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, R.layout.spinner_item);
+        for(String s : Diaries.enumerateDiaries(this)) {
+            spinnerAdapter.add(s);
+        }
+        spinner.setAdapter(spinnerAdapter);
+        if (spinnerAdapter.isEmpty()) {
+            UserInterface.toast(this, getString(R.string.zadnyDenikNebylNalezen));
+        }
     }
 }

@@ -1,5 +1,6 @@
 package hudecek.denik;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -15,18 +16,15 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 
 import java.util.Calendar;
-import java.util.Date;
 
-/**
- * Created by petrh on 18.10.15.
- */
-public class EditStory extends Activity {
-
-Story story;
-    EditText tbDate; EditText tbNadpis; EditText tbContents;
+public class EditStoryActivity extends Activity {
+    Story story;
+    EditText tbDate;
+    EditText tbNadpis;
+    EditText tbContents;
     Button bChangeDate;
 
-    public void refreshdate() {
+    public void refreshDate() {
         final Calendar c = Calendar.getInstance();
         c.setTime(story.date);
         int year = c.get(Calendar.YEAR);
@@ -47,15 +45,17 @@ Story story;
         switch (item.getItemId()) {
 
             case R.id.deleteThis:
-                Session.stories.remove(Session.editingStory);
+                Session.getSession().removeStory(Session.editingStory);
                 Session.editingStory = null;
                 Utils.Toast(this, getString(R.string.zaznamSmazan));
-                startActivity(new Intent(this, MainActivity.class));
+                Session.getSession().saveAndToast(this);
+                UserInterface.switchTo(this, MainActivity.class);
                 return true;
             default:
                 // Save
                 story.name = tbNadpis.getText().toString();
                 story.text = tbContents.getText().toString();
+                Session.getSession().saveAndToast(this);
                 return super.onOptionsItemSelected(item);
         }
     }
@@ -63,40 +63,44 @@ Story story;
     public static class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
 
-        private EditStory es;
-        public  DatePickerFragment(EditStory es) {
+        private EditStoryActivity es;
+        public DatePickerFragment() {
+            this.es = null;
+        }
+        @SuppressLint("ValidFragment")
+        public  DatePickerFragment(EditStoryActivity es) {
           this.es = es;
         }
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the current date as the default date in the picker
-            final Calendar c = Calendar.getInstance();
-            c.setTime(es.story.date);
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
 
-            // Create a new instance of DatePickerDialog and return it
-            return new DatePickerDialog(getActivity(), this, year, month, day);
+            if (es != null) {
+                // Use the current date as the default date in the picker
+                final Calendar c = Calendar.getInstance();
+                c.setTime(es.story.date);
+                int year = c.get(Calendar.YEAR);
+                int month = c.get(Calendar.MONTH);
+                int day = c.get(Calendar.DAY_OF_MONTH);
+
+                // Create a new instance of DatePickerDialog and return it
+                return new DatePickerDialog(getActivity(), this, year, month, day);
+            }
+            else return  new DatePickerDialog(getActivity(), this, 2015, 1,1);
         }
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
             Calendar c = Calendar.getInstance();
             c.set(year, month, day);
-            es.story.date =  c.getTime();
-            es.refreshdate();
+            if (es != null) {
+                es.story.date = c.getTime();
+                es.refreshDate();
+            }
         }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (Session.stories == null) {
-            startActivity(new Intent(this, WelcomeActivity.class));
-            return;
-        }
-
         setContentView(R.layout.editstory);
 
 
@@ -107,7 +111,8 @@ Story story;
          tbNadpis = (EditText) findViewById(R.id.tbNadpis);
          tbContents = (EditText) findViewById(R.id.tbContents);
          bChangeDate = (Button) findViewById(R.id.bChangeDate);
-        EditStory es = this;
+         Button bSaveNow = (Button) findViewById(R.id.bQuickSave);
+         final EditStoryActivity es = this;
          bChangeDate.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
@@ -118,10 +123,34 @@ Story story;
 
          story = Session.editingStory;
 
-        refreshdate();
-        tbNadpis.setText(story.name);
-        tbContents.setText(story.text);
+         refreshDate();
+         tbNadpis.setText(story.name);
+         tbContents.setText(story.text);
+
+         final Activity context = this;
+         bSaveNow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                story.name = tbNadpis.getText().toString();
+                story.text = tbContents.getText().toString();
+                Session.getSession().saveAndToast(context);
+            }
+         });
 
 
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        tbNadpis.setText(savedInstanceState.getString("nadpis"));
+        tbContents.setText(savedInstanceState.getString("text"));
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString("nadpis", tbNadpis.getText().toString());
+        outState.putString("text", tbContents.getText().toString());
+        super.onSaveInstanceState(outState);
     }
 }

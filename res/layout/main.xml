@@ -4,17 +4,27 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
         >
-    <TextView
+
+    <LinearLayout
+        android:id="@+id/layoutSearch"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Vyhledávání:"
-            android:id="@+id/label"/>
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:id="@+id/tbSearch" />
+            android:singleLine="true"
+            android:hint="Zadejte klíčová slova sem"
+            android:layout_weight="1"
+            android:id="@+id/tbSearch" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text="x"
+            android:id="@+id/bHideSearch"/>
+    </LinearLayout>
 
     <ListView
             android:layout_width="match_parent"

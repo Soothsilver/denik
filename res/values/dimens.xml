@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="NormalSize">30dp</dimen>
-    <dimen name="StoryMedium">25dp</dimen>
-    <dimen name="StorySmall">15dp</dimen>
+    <dimen name="NormalSize">30sp</dimen>
+    <dimen name="StoryMedium">25sp</dimen>
+    <dimen name="StorySmall">15sp</dimen>
 </resources>

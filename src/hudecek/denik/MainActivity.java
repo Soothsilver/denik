@@ -9,40 +9,41 @@ import android.view.View;
 import android.widget.*;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 
 public class MainActivity extends Activity {
-    /**
-     * Called when the activity is first created.
-     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Session.stories == null) {
-            startActivity(new Intent(this, WelcomeActivity.class));
-            return;
-        }
         setContentView(R.layout.main);
-
-        if (Session.searchText == null) {
-            Session.searchText = "";
-        }
-
         reloadRecords();
-
-        filter(Session.searchText);
-        Session.save(this);
-
-        getActionBar().setTitle(Session.diaryName);
+        getActionBar().setTitle(Session.getSession().getName());
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        EditText tbSearch = (EditText)findViewById(R.id.tbSearch);
+        final EditText tbSearch = (EditText)findViewById(R.id.tbSearch);
+        final LinearLayout layoutSearch = (LinearLayout)findViewById(R.id.layoutSearch);
+        final Button bCloseSearch = (Button)findViewById(R.id.bHideSearch);
+        if (Session.searchText == null) Session.searchText = "";
+        layoutSearch.setVisibility(Session.searchText.isEmpty() ? View.GONE : View.VISIBLE);
         tbSearch.setText(Session.searchText);
+        filter(Session.searchText);
+
+        bCloseSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Session.searchText = "";
+                tbSearch.setText("");
+                filter(Session.searchText);
+                layoutSearch.setVisibility(View.GONE);
+            }
+        });
+
         tbSearch.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     filter(tbSearch.getText().toString());
+                    Session.searchText = tbSearch.getText().toString();
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -51,19 +52,17 @@ public class MainActivity extends Activity {
     }
 
     private void filter(String search) {
-
             if (search == null) {
                 search = "";
             }
-
             Session.searchText = search;
 
             searchResults.clear();
-            for (Story story : Session.stories) {
+            for (Story story : Session.getSession().getStories()) {
                 if (search.equals("")) {
                     searchResults.add(story);
                 } else {
-                    if (story.name.contains(search) || story.text.contains(search)) {
+                    if (story.matches(search)) {
                         searchResults.add(story);
                     }
                 }
@@ -72,7 +71,6 @@ public class MainActivity extends Activity {
                 searchResults.add(null);
             }
             Collections.sort(searchResults);
-
     }
 
     @Override
@@ -84,6 +82,7 @@ public class MainActivity extends Activity {
                     Utils.setStorageDirectory(this, data.getData());
                 }
                 break;
+            /*
             case Utils.FILE_IMPORT:
                 if (resultCode == RESULT_OK) {
                     Utils.importFile(this, data.getData());
@@ -95,7 +94,7 @@ public class MainActivity extends Activity {
                 if (resultCode == RESULT_OK) {
                     Utils.exportFile(this, data.getData());
                 }
-                break;
+                break;*/
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -104,21 +103,22 @@ public class MainActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.newStory) {
             Story story = new Story("");
-            story.date = new Date();
-            story.text = "";
-            Session.stories.add(story);
-            EditText tbSearch = (EditText) findViewById(R.id.tbSearch);
-            filter(tbSearch.getText().toString());
+            Session.getSession().addStory(story);
+            filter(Session.searchText);
             adapter.notifyDataSetChanged();
+            openStory(story);
         } else if (item.getItemId() == R.id.setStorageDirectory) {
             Utils.launchFileDialog(this, Utils.FILE_SELECT_CODE);
+        } else if (item.getItemId() == R.id.openSearch) {
+            LinearLayout layout = (LinearLayout)findViewById(R.id.layoutSearch);
+            layout.setVisibility(View.VISIBLE);
+
+            /*
         } else if (item.getItemId() == R.id.exportAsPlaintext) {
             Utils.launchFileDialog(this, Utils.FILE_EXPORT);
         } else if (item.getItemId() == R.id.importFromPlaintext) {
             Utils.launchFileDialog(this, Utils.FILE_IMPORT);
-        } else {
-            // Without this, the login screen will automatically move back in here
-            Session.password = "";
+            */
         }
         return super.onOptionsItemSelected(item);
     }
@@ -135,20 +135,13 @@ public class MainActivity extends Activity {
 
     public void reloadRecords() {
         lv = (ListView) findViewById(R.id.lbStories);
-
         adapter = new StoryAdapter(this, searchResults);
-
-
         lv.setAdapter(adapter);
-
     }
 
     public void openStory(Story story) {
-        if (story.text != null) {
-            Session.editingStory = story;
-            Intent i = new Intent(this, EditStory.class);
-            startActivity(i);
-        }
+        Session.editingStory = story;
+        UserInterface.switchTo(this, EditStoryActivity.class);
     }
 }
     class StoryAdapter extends BaseAdapter {
@@ -179,23 +172,24 @@ public class MainActivity extends Activity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View rowView;
-            rowView = inflater.inflate(R.layout.row, null);
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            View rowView = convertView;
+            if (rowView == null) {
+                rowView = inflater.inflate(R.layout.row, null); // maybe parent, false?
+            }
             TextView lblCaption = (TextView) rowView.findViewById(R.id.lblStoryCaption);
             TextView lblDesc = (TextView) rowView.findViewById(R.id.lblStoryDesc);
             if (stories.get(position) == null) {
                 lblCaption.setText(context.getString(R.string.noMatchFound));
                 lblDesc.setText("");
             }else {
-                String thaname = stories.get(position).name;
-                if (thaname.equals("")) thaname = context.getString(R.string.noname);
-
-                lblCaption.setText(stories.get(position).date.getDate() + ". " + (stories.get(position).date.getMonth() + 1) + ". " + thaname);
+                String storyName = stories.get(position).name;
+                if (storyName.equals("")) storyName = context.getString(R.string.noname);
+                Calendar c = Calendar.getInstance(); c.setTime(stories.get(position).date);
+                lblCaption.setText(c.get(Calendar.DATE) + ". " + (c.get(Calendar.MONTH) + 1) + ". " + (c.get(Calendar.YEAR)) +" "+ storyName);
                 lblDesc.setText(stories.get(position).text);
                 if (stories.get(position).text.length() == 0) {
                     lblDesc.setVisibility(View.GONE);
-                } else {
                 }
 
                 rowView.setOnClickListener(new View.OnClickListener() {
