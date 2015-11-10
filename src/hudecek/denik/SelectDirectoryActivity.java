@@ -47,9 +47,11 @@ public class SelectDirectoryActivity extends Activity {
                 String name = (String) lv.getItemAtPosition(position);
                 File file = new File(selectedFolder, name);
                 if (file.isDirectory()) {
-                    selectedFolder = file;
-                    loadFromFolder();
-                    adapter.notifyDataSetChanged();
+                    if (file.listFiles() != null) {
+                        selectedFolder = file;
+                        loadFromFolder();
+                        adapter.notifyDataSetChanged();
+                    }
                 }
             }
         });
