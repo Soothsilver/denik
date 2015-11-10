@@ -21,5 +21,7 @@
         <activity android:name=".MainActivity" android:parentActivityName=".WelcomeActivity" />
         <activity android:name=".EditStoryActivity" android:parentActivityName=".MainActivity"/>
         <activity android:name=".NewDiaryActivity" android:parentActivityName=".WelcomeActivity"/>
+        <activity android:name=".ChangePasswordActivity" android:parentActivityName=".ChangePasswordActivity"/>
+        <activity android:name=".SelectDirectoryActivity" android:parentActivityName=".WelcomeActivity" />
     </application>
 </manifest> 

@@ -10,9 +10,10 @@
         android:icon="@drawable/ic_plus"
         android:showAsAction="ifRoom"
         android:title="@string/newStory" />
+    <!--
     <item android:id="@+id/setStorageDirectory"
           android:title="Nastavit složku..."
-          />
+          />-->
     <item android:id="@+id/changePassword"
           android:title="Změnit heslo..."
           />

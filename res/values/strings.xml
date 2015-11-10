@@ -37,4 +37,7 @@
     <string name="chybaPriUzavirani">Chyba při uzavírání.</string>
     <string name="saveFailed">Deník se nepodařilo uložit!</string>
     <string name="saveSuccessfulIs">Uloženo.</string>
+    <string name="denikcolon">"Deník: "</string>
+    <string name="zmenitHeslo">Změnit heslo</string>
+    <string name="hesloChanged">Heslo bylo změněno.</string>
 </resources>

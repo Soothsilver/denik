@@ -22,5 +22,14 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="jasypt-1.9.2-lite" level="project" />
     <orderEntry type="library" name="android-support-annotations" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$APPLICATION_HOME_DIR$/lib/annotations.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

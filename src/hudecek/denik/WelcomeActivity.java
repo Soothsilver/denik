@@ -28,7 +28,7 @@ public class WelcomeActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.setStorageDirectory) {
-            Utils.launchFileDialog(this, Utils.FILE_SELECT_CODE);
+            UserInterface.switchTo(this, SelectDirectoryActivity.class);
         } else if (item.getItemId() == R.id.createNewDiary) {
             UserInterface.switchTo(this, NewDiaryActivity.class);
         }

@@ -1,5 +1,6 @@
 package hudecek.denik;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -110,9 +111,10 @@ public class MainActivity extends Activity {
         } else if (item.getItemId() == R.id.setStorageDirectory) {
             Utils.launchFileDialog(this, Utils.FILE_SELECT_CODE);
         } else if (item.getItemId() == R.id.openSearch) {
-            LinearLayout layout = (LinearLayout)findViewById(R.id.layoutSearch);
+            LinearLayout layout = (LinearLayout) findViewById(R.id.layoutSearch);
             layout.setVisibility(View.VISIBLE);
-
+        } else if (item.getItemId() == R.id.changePassword) {
+            UserInterface.switchTo(this, ChangePasswordActivity.class);
             /*
         } else if (item.getItemId() == R.id.exportAsPlaintext) {
             Utils.launchFileDialog(this, Utils.FILE_EXPORT);
@@ -171,12 +173,10 @@ public class MainActivity extends Activity {
             return position;
         }
 
+        @SuppressLint("InflateParams")
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            View rowView = convertView;
-            if (rowView == null) {
-                rowView = inflater.inflate(R.layout.row, null); // maybe parent, false?
-            }
+            View rowView = inflater.inflate(R.layout.row, null);
             TextView lblCaption = (TextView) rowView.findViewById(R.id.lblStoryCaption);
             TextView lblDesc = (TextView) rowView.findViewById(R.id.lblStoryDesc);
             if (stories.get(position) == null) {

@@ -17,6 +17,7 @@ public class Session implements Serializable {
     private ArrayList<Story> entries;
     private String name;
     private String pass;
+
     public Session(String name, String pass) {
         this.name = name;
         this.pass = pass;
@@ -132,5 +133,9 @@ public class Session implements Serializable {
             UserInterface.toast(activity, activity.getString(R.string.saveSuccessfulIs));
         else
             UserInterface.toast(activity, activity.getString(R.string.saveFailed));
+    }
+
+    public void setPassword(String password) {
+        this.pass = password;
     }
 }

@@ -41,7 +41,7 @@ public class Diaries {
             //noinspection ResultOfMethodCallIgnored
             denikDir.mkdirs();
             folder = denikDir;
-            Utils.storeSetting(context, "diaryDirectory", folder.toString());
+            Utils.storeSetting(context, "diaryDirectory", folder.getAbsolutePath());
         }
     }
 
@@ -68,5 +68,15 @@ public class Diaries {
         //noinspection ResultOfMethodCallIgnored
         backup.mkdirs();
         return backup;
+    }
+
+    public static File getDirectory(Activity context) {
+        loadDiaryDirectory(context);
+        return folder;
+    }
+
+    public static void setDirectory(Activity context, File selectedFolder) {
+        Utils.storeSetting(context, "diaryDirectory", selectedFolder.getAbsolutePath());
+        loadDiaryDirectory(context);
     }
 }

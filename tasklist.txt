@@ -1,8 +1,4 @@
 
-Možnost změnit heslo.
-Možnost změnit složku.
-Otestovat, že všechno funguje.
-Nezobrazují se texty článků v přehledu. Čím to je?
 
 Changelog:
 ---------------------------------------------
@@ -26,6 +22,9 @@ Přidané funkce a změny:
 - Když je aplikace na pozadí a Android ji zničí, aktuálně editovaný text není ztracen a načte se zpět. (REQ Zapamatovat si obrazovku pro obnovení stavu.)
 - Vyhledávání již nerozlišuje malá a velká písmena. (REQ Nerozlišovat ve vyhledávání malá a velká písmena.)
 - Přehled záznamů nyní u každého záznamu zobrazuje i rok. (REQ V datu, které je vidět v přehledu, uvádět i rok.)
+- Je nyní možné změnit deníku heslo. (REQ Možnost změnit heslo.)
+- Vybírání složky nyní nepadá.
+
 Odstraněné funkce:
 - Již není možné exportovat nebo importovat záznamy ve formě čistého textu.
 - Pokud se soubor s deníkem změní, zatímco je otevřen v aplikaci, aplikace o tom uživatele neinformuje.
