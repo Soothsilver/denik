@@ -41,4 +41,6 @@
     <string name="zmenitHeslo">Změnit heslo</string>
     <string name="hesloChanged">Heslo bylo změněno.</string>
     <string name="noDenikExists">Žádný deník neexistuje. Nejprve vytvořte nový deník.</string>
+    <string name="ReturnToLogin">Návrat k přihlášení...</string>
+    <string name="AndroidTerminatedThis">Systém Android ukončil tuto aplikaci, budete proto navráceni na přihlašovací obrazovku.</string>
 </resources>

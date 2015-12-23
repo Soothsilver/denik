@@ -18,6 +18,12 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        if (Session.getSession() == null) {
+            getActionBar().setTitle(R.string.ReturnToLogin);
+            UserInterface.toast(this, getString(R.string.AndroidTerminatedThis));
+            UserInterface.switchTo(this, WelcomeActivity.class);
+            return;
+        }
         reloadRecords();
         getActionBar().setTitle(Session.getSession().getName());
         getActionBar().setDisplayHomeAsUpEnabled(true);

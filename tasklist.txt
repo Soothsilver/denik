@@ -2,10 +2,11 @@
 
 Changelog:
 ---------------------------------------------
-
 1.3
 - Pokus o přihlášení k prázdnému deníku nezpůsobí pád aplikace.
-
+- Pokud Android ukončí aplikaci, když je na pozadí, to nezpůsobí pád aplikace.
+- Při minimalizaci se uloží aktuální obsah textového pole.
+- Každý 60 vteřin se uloží aktuální obsah textového pole.
 
 1.2
 

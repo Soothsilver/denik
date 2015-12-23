@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,8 +24,24 @@ public class EditStoryActivity extends Activity {
     EditText tbNadpis;
     EditText tbContents;
     Button bChangeDate;
+    Handler timerHandler;
+    Runnable timerRunnable ;
+    private static final int AUTOSAVE_INTERVAL = 60000;
+    private void autosave() {
+        if (story == null) return;
+        if (story.name.equals(tbNadpis.getText().toString()) &&
+                story.text.equals(tbContents.getText().toString())) {
+
+        } else {
+            story.name = tbNadpis.getText().toString();
+            story.text = tbContents.getText().toString();
+            Session.getSession().saveAndToast(this);
+        }
+    }
+
 
     public void refreshDate() {
+        if (story == null) return;
         final Calendar c = Calendar.getInstance();
         c.setTime(story.date);
         int year = c.get(Calendar.YEAR);
@@ -103,9 +120,27 @@ public class EditStoryActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.editstory);
 
+        if (Session.editingStory == null) {
+            getActionBar().setTitle(R.string.ReturnToLogin);
+            UserInterface.toast(this, getString(R.string.AndroidTerminatedThis));
+            UserInterface.switchTo(this, WelcomeActivity.class);
+            return;
+        }
+        timerHandler  = new Handler();
+        timerRunnable = new Runnable() {
+
+            @Override
+            public void run() {
+               autosave();
+                timerHandler.postDelayed(this, AUTOSAVE_INTERVAL);
+            }
+        };
+        timerHandler.postDelayed(timerRunnable, AUTOSAVE_INTERVAL);
 
         getActionBar().setTitle(getString(R.string.editacenanmu));
         getActionBar().setDisplayHomeAsUpEnabled(true);
+
+
 
          tbDate = (EditText) findViewById(R.id.tbDate);
          tbNadpis = (EditText) findViewById(R.id.tbNadpis);
@@ -141,16 +176,8 @@ public class EditStoryActivity extends Activity {
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        tbNadpis.setText(savedInstanceState.getString("nadpis"));
-        tbContents.setText(savedInstanceState.getString("text"));
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putString("nadpis", tbNadpis.getText().toString());
-        outState.putString("text", tbContents.getText().toString());
-        super.onSaveInstanceState(outState);
+    protected void onPause() {
+        autosave();
+        super.onPause();
     }
 }
