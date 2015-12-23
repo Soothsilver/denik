@@ -65,7 +65,7 @@ public class SelectDirectoryActivity extends Activity {
                         randomFile.delete();
                         Diaries.setDirectory(context, selectedFolder);
                         UserInterface.switchTo(context, WelcomeActivity.class);
-                    } catch (IOException ex) {
+                    } catch (IOException ignored) {
 
                     }
                 }

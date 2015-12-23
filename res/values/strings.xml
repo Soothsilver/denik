@@ -40,4 +40,5 @@
     <string name="denikcolon">"Deník: "</string>
     <string name="zmenitHeslo">Změnit heslo</string>
     <string name="hesloChanged">Heslo bylo změněno.</string>
+    <string name="noDenikExists">Žádný deník neexistuje. Nejprve vytvořte nový deník.</string>
 </resources>

@@ -77,6 +77,10 @@ public class WelcomeActivity extends Activity {
         bLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (spName.getSelectedItem() == null) {
+                    UserInterface.toast(context, getString(R.string.noDenikExists));
+                    return;
+                }
                 String diaryName = spName.getSelectedItem().toString();
                 String diaryPass = tbPass.getText().toString();
                 if (Session.login(context, diaryName, diaryPass)) {

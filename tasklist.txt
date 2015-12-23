@@ -3,6 +3,10 @@
 Changelog:
 ---------------------------------------------
 
+1.3
+- Pokus o přihlášení k prázdnému deníku nezpůsobí pád aplikace.
+
+
 1.2
 
 Přidané funkce a změny:
