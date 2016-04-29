@@ -30,10 +30,13 @@ public class Diaries {
 
     private static void loadDiaryDirectory(Activity context) {
         String retrievedString = Utils.retrieveSetting(context, "diaryDirectory");
-        folder = new File(retrievedString);
-        if (!folder.isDirectory()) {
-            retrievedString = null;
-            UserInterface.toast(context, context.getString(R.string.mistoByloSmazano));
+        if (retrievedString != null) {
+            folder = new File(retrievedString);
+
+            if (!folder.isDirectory()) {
+                retrievedString = null;
+                UserInterface.toast(context, context.getString(R.string.mistoByloSmazano));
+            }
         }
         if (retrievedString == null) {
             File documents = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
